@@ -9,7 +9,6 @@ import jakarta.persistence.Id;
 @Setter
 public class User {
 	@Id
-	private String nickName;
 	private String fullName;
 	private Status status;
 }
