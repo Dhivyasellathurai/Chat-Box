@@ -10,5 +10,6 @@ import jakarta.persistence.Id;
 public class User {
 	@Id
 	private String fullName;
+	private Long phoneNumber;
 	private Status status;
 }
