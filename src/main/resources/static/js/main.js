@@ -10,15 +10,15 @@ const chatArea = document.querySelector('#chat-messages');
 const logout = document.querySelector('#logout');
 
 let stompClient = null;
-let phonenumber = null;
+let phoneNumber = null;
 let fullname = null;
 let selectedUserId = null;
 
 function connect(event) {
-    phonenumber = document.querySelector('#phonenumber').value.trim();
+    phoneNumber = document.querySelector('#phoneNumber').value.trim();
     fullname = document.querySelector('#fullname').value.trim();
 
-    if (phonenumber && fullname) {
+    if (phoneNumber && fullname) {
         usernamePage.classList.add('hidden');
         chatPage.classList.remove('hidden');
 
@@ -32,13 +32,13 @@ function connect(event) {
 
 
 function onConnected() {
-    stompClient.subscribe(`/user/${phonenumber}/queue/messages`, onMessageReceived);
+    stompClient.subscribe(`/user/${phoneNumber}/queue/messages`, onMessageReceived);
     stompClient.subscribe(`/user/public`, onMessageReceived);
 
     // register the connected user
     stompClient.send("/app/user.addUser",
         {},
-        JSON.stringify({phoneNumber: phonenumber, fullName: fullname, status: 'ONLINE'})
+        JSON.stringify({phoneNumber: phoneNumber, fullName: fullname, status: 'ONLINE'})
     );
     document.querySelector('#connected-user-fullname').textContent = fullname;
     findAndDisplayConnectedUsers().then();
@@ -47,7 +47,7 @@ function onConnected() {
 async function findAndDisplayConnectedUsers() {
     const connectedUsersResponse = await fetch('/users');
     let connectedUsers = await connectedUsersResponse.json();
-    connectedUsers = connectedUsers.filter(user => user.phoneNumber !== phonenumber);
+    connectedUsers = connectedUsers.filter(user => user.phoneNumber !== phoneNumber);
     const connectedUsersList = document.getElementById('connectedUsers');
     connectedUsersList.innerHTML = '';
 
@@ -107,7 +107,7 @@ function userItemClick(event) {
 function displayMessage(senderId, content) {
     const messageContainer = document.createElement('div');
     messageContainer.classList.add('message');
-    if (senderId === phonenumber) {
+    if (senderId === phoneNumber) {
         messageContainer.classList.add('sender');
     } else {
         messageContainer.classList.add('receiver');
@@ -119,7 +119,7 @@ function displayMessage(senderId, content) {
 }
 
 async function fetchAndDisplayUserChat() {
-    const userChatResponse = await fetch(`/messages/${phonenumber}/${selectedUserId}`);
+    const userChatResponse = await fetch(`/messages/${phoneNumber}/${selectedUserId}`);
     const userChat = await userChatResponse.json();
     chatArea.innerHTML = '';
     userChat.forEach(chat => {
@@ -139,13 +139,13 @@ function sendMessage(event) {
     const messageContent = messageInput.value.trim();
     if (messageContent && stompClient) {
         const chatMessage = {
-            senderId: phonenumber,
+            senderId: phoneNumber,
             recipientId: selectedUserId,
             content: messageInput.value.trim(),
             timestamp: new Date()
         };
         stompClient.send("/app/chat", {}, JSON.stringify(chatMessage));
-        displayMessage(phonenumber, messageInput.value.trim());
+        displayMessage(phoneNumber, messageInput.value.trim());
         messageInput.value = '';
     }
     chatArea.scrollTop = chatArea.scrollHeight;
@@ -179,7 +179,7 @@ async function onMessageReceived(payload) {
 function onLogout() {
     stompClient.send("/app/user.disconnectUser",
         {},
-        JSON.stringify({phoneNumber: phonenumber, fullName: fullname, status: 'OFFLINE'})
+        JSON.stringify({phoneNumber: phoneNumber, fullName: fullname, status: 'OFFLINE'})
     );
     window.location.reload();
 }

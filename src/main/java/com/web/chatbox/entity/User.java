@@ -2,6 +2,9 @@ package com.web.chatbox.entity;
 
 import lombok.Getter;
 import lombok.Setter;
+
+
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 @Entity
@@ -9,7 +12,7 @@ import jakarta.persistence.Id;
 @Setter
 public class User {
 	@Id
+	private String phoneNumber;
 	private String fullName;
-	private Long phoneNumber;
 	private Status status;
 }
